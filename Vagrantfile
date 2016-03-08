@@ -65,8 +65,24 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   sudo apt-get update
-  #   sudo apt-get install -y apache2
+  #  config.vm.provision "shell", inline: <<-SHELL
+   #     sudo apt-get update
+   #     sudo apt-get install -y apache2
   # SHELL
+    config.vm.provision "shell", inline: "sudo apt-get update -y"
+    config.vm.provision "shell", inline: "sudo apt-get install curl -y"
+    config.vm.provision "shell", inline: "curl -L https://www.opscode.com/chef/install.sh | sudo bash"
+    
+    config.vm.provision "chef_solo" do |chef|
+        chef.add_recipe "apache2"
+        chef.json = { :apache => { :default_site_enabled => true,
+                                    :docroot_dir => '/vagrant/www'
+                                    } 
+                    }
+    end
+    # git clone https://github.com/opscode-cookbooks/apache2 cookbooks/apache2
+    # git clone https://github.com/opscode-cookbooks/iptables.git cookbooks/iptable
+    # git clone https://github.com/opscode-cookbooks/logrotate.git cookbooks/logrotate
+    # git clone https://github.com/opscode-cookbooks/pacman.git cookbooks/pacman
 end
+
